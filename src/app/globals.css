@@ -1,26 +1,187 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   FORGE — design tokens
+   "Industrial forge meets modern athletic."
+   Deep charcoal base · ember accent · metallic medal tones.
+   ============================================================ */
+
+@theme {
+  /* Base surfaces — near-black charcoals, warm-tinted */
+  --color-forge-950: #0b0b0e;
+  --color-forge-900: #111116;
+  --color-forge-850: #16161c;
+  --color-forge-800: #1c1c23;
+  --color-forge-700: #26262f;
+  --color-forge-600: #34343f;
+  --color-forge-500: #4a4a57;
+
+  /* Text */
+  --color-ash-100: #f5f2ec; /* primary off-white */
+  --color-ash-300: #cfc9bf;
+  --color-ash-400: #a8a29a; /* muted */
+  --color-ash-500: #7c776e;
+
+  /* Ember / amber accent — the single restrained accent */
+  --color-ember: #f0571e;
+  --color-ember-bright: #ff7a1a;
+  --color-ember-deep: #c23d10;
+
+  /* Metallic medal tones */
+  --color-bronze: #b87333;
+  --color-silver: #c0c0c8;
+  --color-gold: #e8b923;
+  --color-platinum: #d6e0e6;
+
+  /* Borders */
+  --color-edge: #26262f;
+  --color-edge-bright: #34343f;
+
+  /* Fonts (wired from next/font in layout.tsx) */
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+
+  /* Radii */
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ============================================================
+   Base
+   ============================================================ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-edge);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-forge-950);
+    color: var(--color-ash-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-ember);
+    color: var(--color-forge-950);
+  }
+
+  /* Headings use the condensed display face */
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 0.95;
+  }
+
+  /* Tabular, confident numerals for weights / PRs */
+  .nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   Texture — global film-grain / noise overlay
+   ============================================================ */
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Atmosphere helpers
+   ============================================================ */
+
+/* Forge-glow radial — warm ember light bleeding from a point */
+.forge-glow {
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(255, 122, 26, 0.12), transparent 70%),
+    radial-gradient(40% 60% at 85% 20%, rgba(240, 87, 30, 0.08), transparent 70%);
+}
+
+/* Hairline metal divider */
+.metal-rule {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-edge-bright) 20%,
+    var(--color-ash-500) 50%,
+    var(--color-edge-bright) 80%,
+    transparent
+  );
+}
+
+/* Brushed-metal surface for cards */
+.brushed {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%), var(--color-forge-900);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ember text gradient for emphasis words */
+.ember-text {
+  background: linear-gradient(180deg, var(--color-ember-bright), var(--color-ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  25% {
+    opacity: 0.85;
+    transform: scaleY(1.04);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleY(0.98);
+  }
+  75% {
+    opacity: 0.9;
+    transform: scaleY(1.02);
+  }
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-120%) rotate(8deg);
+  }
+  100% {
+    transform: translateX(220%) rotate(8deg);
+  }
+}
+
+.animate-flicker {
+  animation: flicker 2.4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-shine {
+  animation: shine-sweep 2.6s ease-in-out infinite;
 }
