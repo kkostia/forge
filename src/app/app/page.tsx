@@ -14,7 +14,7 @@ import { getSessionDates, getTrainingSets } from "@/lib/workouts";
 import { getMedalOverview } from "@/lib/achievements";
 import { computeStreak } from "@/lib/streak";
 import { personalRecords } from "@/lib/progress";
-import { todayInTz, relativeDayLabel, nextPlannedDate, formatLongDate } from "@/lib/dates";
+import { todayInTz, relativeDayLabel, nextPlannedDate } from "@/lib/dates";
 import { MEDAL_RANK, MUSCLE_GROUP_LABELS } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Dashboard" };
