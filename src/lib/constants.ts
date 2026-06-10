@@ -12,6 +12,16 @@ export const MUSCLE_GROUP_LABELS: Record<MuscleGroup, string> = {
   CORE: "Core",
 };
 
+/** Distinct-but-cohesive chart colours per muscle group. */
+export const MUSCLE_GROUP_COLORS: Record<MuscleGroup, string> = {
+  CHEST: "#F0571E",
+  BACK: "#6CA0DC",
+  LEGS: "#5BBF8A",
+  SHOULDERS: "#E8B923",
+  ARMS: "#B57EDC",
+  CORE: "#C0C0C8",
+};
+
 export const DIFFICULTIES = ["BEGINNER", "INTERMEDIATE", "ADVANCED"] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 

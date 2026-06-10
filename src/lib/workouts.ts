@@ -2,6 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import type { MuscleGroup } from "@/lib/constants";
+import type { TrainingSet } from "@/lib/progress";
 
 /** A set entry joined with its exercise's display fields. */
 export type SetWithExercise = {
@@ -79,6 +80,43 @@ export async function getOrCreateSession(userId: string, date: string): Promise<
     .single();
   if (error || !created) throw new Error(error?.message ?? "Could not create session.");
   return created.id;
+}
+
+type RawTrainingRow = {
+  weight_kg: number;
+  reps: number;
+  session: { date: string } | null;
+  exercise: {
+    slug: string;
+    name: string;
+    muscle_group: MuscleGroup;
+    is_anchor_lift: boolean;
+  } | null;
+};
+
+/**
+ * Every logged set for the user, flattened for progress aggregation.
+ * RLS restricts set_entries to the user's own rows automatically.
+ */
+export async function getTrainingSets(): Promise<TrainingSet[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("set_entries")
+    .select(
+      "weight_kg, reps, session:workout_sessions!inner(date), exercise:exercises(slug, name, muscle_group, is_anchor_lift)",
+    );
+
+  return ((data as RawTrainingRow[] | null) ?? [])
+    .filter((r) => r.session && r.exercise)
+    .map((r) => ({
+      weightKg: r.weight_kg,
+      reps: r.reps,
+      date: r.session!.date,
+      exerciseSlug: r.exercise!.slug,
+      exerciseName: r.exercise!.name,
+      muscleGroup: r.exercise!.muscle_group,
+      isAnchor: r.exercise!.is_anchor_lift,
+    }));
 }
 
 /** Assert the session belongs to the user; returns it or null. */
