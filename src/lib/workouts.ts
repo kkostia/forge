@@ -3,6 +3,9 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { MuscleGroup } from "@/lib/constants";
 import type { TrainingSet } from "@/lib/progress";
+import { computeStreak, type StreakResult } from "@/lib/streak";
+import { todayInTz } from "@/lib/dates";
+import type { ProfileRow } from "@/lib/supabase/types";
 
 /** A set entry joined with its exercise's display fields. */
 export type SetWithExercise = {
@@ -60,6 +63,12 @@ export async function getSessionDates(userId: string): Promise<string[]> {
     .eq("user_id", userId)
     .order("date", { ascending: false });
   return (data ?? []).map((r) => r.date);
+}
+
+/** Streak standing for a profile, using its training days + timezone. */
+export async function getStreakForProfile(profile: ProfileRow): Promise<StreakResult> {
+  const dates = await getSessionDates(profile.id);
+  return computeStreak(profile.training_days, dates, todayInTz(profile.timezone));
 }
 
 /** Find-or-create the session row for a day, returning its id. */
