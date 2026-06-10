@@ -3,8 +3,11 @@ import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/lib/supabase/types";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/supabase/env";
 
-const PROTECTED_PREFIX = "/app";
 const AUTH_ROUTES = ["/login", "/signup"];
+
+function isProtected(pathname: string): boolean {
+  return pathname.startsWith("/app") || pathname === "/onboarding";
+}
 
 /**
  * Refreshes the Supabase auth session (rotating cookies) and guards routes:
@@ -39,7 +42,7 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (!user && pathname.startsWith(PROTECTED_PREFIX)) {
+  if (!user && isProtected(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirectTo", pathname);

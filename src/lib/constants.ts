@@ -25,6 +25,17 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 export const MEDAL_TIERS = ["NONE", "BRONZE", "SILVER", "GOLD", "PLATINUM"] as const;
 export type MedalTier = (typeof MEDAL_TIERS)[number];
 
+/** Weekdays, indexed 0=Sun .. 6=Sat (matches JS Date.getDay and profiles.training_days). */
+export const WEEKDAYS = [
+  { value: 0, short: "Sun", label: "Sunday" },
+  { value: 1, short: "Mon", label: "Monday" },
+  { value: 2, short: "Tue", label: "Tuesday" },
+  { value: 3, short: "Wed", label: "Wednesday" },
+  { value: 4, short: "Thu", label: "Thursday" },
+  { value: 5, short: "Fri", label: "Friday" },
+  { value: 6, short: "Sat", label: "Saturday" },
+] as const;
+
 /** Earnable tiers in ascending order (excludes NONE). */
 export const EARNABLE_TIERS = ["BRONZE", "SILVER", "GOLD", "PLATINUM"] as const;
 export type EarnableTier = (typeof EARNABLE_TIERS)[number];

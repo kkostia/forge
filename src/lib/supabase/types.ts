@@ -2,12 +2,16 @@
  * Hand-written database types mirroring supabase/migrations/0001_init.sql.
  * Kept in sync manually (the project is small); could be generated with
  * `supabase gen types typescript` once the CLI is wired up.
+ *
+ * NOTE: these are `type` aliases, not `interface`s — supabase-js constrains
+ * each table's Row/Insert/Update to `Record<string, unknown>`, and only type
+ * aliases (not interfaces) are assignable to that index signature.
  */
 import type { Difficulty, MedalThresholds, MedalTier, MuscleGroup } from "@/lib/constants";
 
 export type Json = string | number | boolean | null | { [k: string]: Json } | Json[];
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   email: string;
   name: string | null;
@@ -16,9 +20,9 @@ export interface ProfileRow {
   training_days: number[];
   onboarded: boolean;
   created_at: string;
-}
+};
 
-export interface ExerciseRow {
+export type ExerciseRow = {
   id: string;
   slug: string;
   name: string;
@@ -32,17 +36,17 @@ export interface ExerciseRow {
   media_url: string | null;
   medal_thresholds: MedalThresholds;
   created_at: string;
-}
+};
 
-export interface WorkoutSessionRow {
+export type WorkoutSessionRow = {
   id: string;
   user_id: string;
   date: string;
   notes: string | null;
   created_at: string;
-}
+};
 
-export interface SetEntryRow {
+export type SetEntryRow = {
   id: string;
   session_id: string;
   exercise_id: string;
@@ -51,32 +55,33 @@ export interface SetEntryRow {
   rest_seconds: number | null;
   position: number;
   created_at: string;
-}
+};
 
-export interface AchievementRow {
+export type AchievementRow = {
   id: string;
   user_id: string;
   exercise_id: string | null;
   muscle_group: MuscleGroup | null;
   medal: MedalTier;
   earned_at: string;
-}
+};
 
-export interface ChatMessageRow {
+export type ChatMessageRow = {
   id: string;
   user_id: string;
   role: "user" | "assistant";
   content: string;
   created_at: string;
-}
+};
 
 type TableDef<Row, Insert, Update> = {
   Row: Row;
   Insert: Insert;
   Update: Update;
+  Relationships: [];
 };
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: TableDef<
@@ -118,5 +123,6 @@ export interface Database {
       difficulty: Difficulty;
       medal: MedalTier;
     };
+    CompositeTypes: Record<string, never>;
   };
-}
+};
