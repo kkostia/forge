@@ -1,0 +1,94 @@
+import "server-only";
+
+import { createClient } from "@/lib/supabase/server";
+import type { MuscleGroup } from "@/lib/constants";
+
+/** A set entry joined with its exercise's display fields. */
+export type SetWithExercise = {
+  id: string;
+  session_id: string;
+  exercise_id: string;
+  weight_kg: number;
+  reps: number;
+  rest_seconds: number | null;
+  position: number;
+  exercise: {
+    name: string;
+    slug: string;
+    muscle_group: MuscleGroup;
+  } | null;
+};
+
+export type SessionWithSets = {
+  id: string;
+  date: string;
+  notes: string | null;
+  sets: SetWithExercise[];
+};
+
+/** The session for a given day with its ordered sets (or null if none). */
+export async function getSessionForDate(
+  userId: string,
+  date: string,
+): Promise<SessionWithSets | null> {
+  const supabase = await createClient();
+  const { data: session } = await supabase
+    .from("workout_sessions")
+    .select("id, date, notes")
+    .eq("user_id", userId)
+    .eq("date", date)
+    .maybeSingle();
+
+  if (!session) return null;
+
+  const { data: sets } = await supabase
+    .from("set_entries")
+    .select("*, exercise:exercises(name, slug, muscle_group)")
+    .eq("session_id", session.id)
+    .order("position");
+
+  return { ...session, sets: (sets as SetWithExercise[] | null) ?? [] };
+}
+
+/** All dates the user has logged a session on (for the calendar markers). */
+export async function getSessionDates(userId: string): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("workout_sessions")
+    .select("date")
+    .eq("user_id", userId)
+    .order("date", { ascending: false });
+  return (data ?? []).map((r) => r.date);
+}
+
+/** Find-or-create the session row for a day, returning its id. */
+export async function getOrCreateSession(userId: string, date: string): Promise<string> {
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("workout_sessions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("date", date)
+    .maybeSingle();
+  if (existing) return existing.id;
+
+  const { data: created, error } = await supabase
+    .from("workout_sessions")
+    .insert({ user_id: userId, date })
+    .select("id")
+    .single();
+  if (error || !created) throw new Error(error?.message ?? "Could not create session.");
+  return created.id;
+}
+
+/** Assert the session belongs to the user; returns it or null. */
+export async function getOwnedSession(userId: string, sessionId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("workout_sessions")
+    .select("id, date, user_id")
+    .eq("id", sessionId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data;
+}

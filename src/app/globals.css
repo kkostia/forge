@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-day-picker/style.css";
 
 /* ============================================================
    FORGE — design tokens
@@ -277,4 +278,75 @@
   .guide-anim-hold {
     animation: none;
   }
+}
+
+/* ============================================================
+   Calendar (react-day-picker) — themed to the forge palette
+   ============================================================ */
+
+.forge-calendar {
+  --rdp-accent-color: var(--color-ember);
+  --rdp-accent-background-color: var(--color-ember);
+  --rdp-today-color: var(--color-ember-bright);
+  --rdp-day-width: 2.5rem;
+  --rdp-day-height: 2.5rem;
+  --rdp-outside-opacity: 0.35;
+  --rdp-disabled-opacity: 0.25;
+  color: var(--color-ash-300);
+}
+.forge-calendar .rdp-caption_label,
+.forge-calendar .rdp-month_caption {
+  color: var(--color-ash-100);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.forge-calendar .rdp-weekday {
+  color: var(--color-ash-500);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+.forge-calendar .rdp-day_button {
+  border-radius: 0.5rem;
+  color: var(--color-ash-300);
+}
+.forge-calendar .rdp-day_button:hover {
+  background-color: var(--color-forge-800);
+  color: var(--color-ash-100);
+}
+.forge-calendar .rdp-selected .rdp-day_button {
+  background-color: var(--color-ember);
+  color: var(--color-forge-950);
+  font-weight: 700;
+  border: none;
+}
+.forge-calendar .rdp-today:not(.rdp-selected) .rdp-day_button {
+  color: var(--color-ember-bright);
+  font-weight: 700;
+}
+.forge-calendar .rdp-chevron {
+  fill: var(--color-ash-300);
+}
+.forge-calendar .rdp-button_previous:hover .rdp-chevron,
+.forge-calendar .rdp-button_next:hover .rdp-chevron {
+  fill: var(--color-ember);
+}
+/* "has a logged session" marker dot */
+.forge-calendar .day-logged:not(.rdp-selected) .rdp-day_button {
+  position: relative;
+}
+.forge-calendar .day-logged:not(.rdp-selected) .rdp-day_button::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background-color: var(--color-ember);
+}
+/* planned training-day ring */
+.forge-calendar .day-planned:not(.rdp-selected):not(.day-logged) .rdp-day_button {
+  box-shadow: inset 0 0 0 1px var(--color-edge-bright);
 }
