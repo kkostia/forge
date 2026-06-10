@@ -46,6 +46,21 @@ export function formatLongDate(value: string): string {
   });
 }
 
+/**
+ * The next planned training day on or after `today`, as 'YYYY-MM-DD'.
+ * Returns null when no training days are set.
+ */
+export function nextPlannedDate(trainingDays: number[], today: string): string | null {
+  if (trainingDays.length === 0) return null;
+  const planned = new Set(trainingDays);
+  const cursor = parseDateString(today);
+  for (let i = 0; i < 7; i++) {
+    if (planned.has(cursor.getDay())) return toDateString(cursor);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return null;
+}
+
 /** Relative label for recent days: Today / Yesterday / long date. */
 export function relativeDayLabel(value: string, todayValue: string): string {
   if (value === todayValue) return "Today";

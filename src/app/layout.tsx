@@ -24,6 +24,20 @@ export const metadata: Metadata = {
   description:
     "A gamified strength-training companion for gym beginners. Learn the core lifts, log your workouts, earn Bronze→Platinum medals, keep your streak, and ask an AI coach.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  applicationName: "Forge",
+  keywords: ["strength training", "gym", "beginners", "workout log", "medals", "fitness"],
+  openGraph: {
+    type: "website",
+    siteName: "Forge",
+    title: "Forge — Forge your strength",
+    description:
+      "Learn the core lifts, log your workouts, earn Bronze→Platinum medals, keep your streak, and ask an AI coach.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Forge — Forge your strength",
+    description: "Gamified strength training for gym beginners.",
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +48,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} h-full antialiased`}>
       <body className="grain bg-forge-950 text-ash-100 flex min-h-full flex-col">
+        <a
+          href="#main"
+          className="bg-ember text-forge-950 sr-only z-[100] rounded-md px-4 py-2 text-sm font-semibold focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+        >
+          Skip to content
+        </a>
         {children}
         <Toaster
           theme="dark"

@@ -132,7 +132,9 @@ export function AppShell({
         )}
       </header>
 
-      <main className="flex-1 py-8">{children}</main>
+      <main id="main" className="flex-1 py-8">
+        {children}
+      </main>
     </div>
   );
 }
