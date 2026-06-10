@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ExerciseCombobox, type ComboExercise } from "@/components/log/exercise-combobox";
+import { Medal } from "@/components/medal";
 import {
   createSetAction,
   deleteSetAction,
@@ -15,9 +16,33 @@ import {
   type LogState,
 } from "@/app/app/log/actions";
 import type { SetWithExercise } from "@/lib/workouts";
-import { MUSCLE_GROUP_LABELS } from "@/lib/constants";
+import type { EarnedMedal } from "@/lib/achievements";
+import { MEDAL_LABELS, MUSCLE_GROUP_LABELS } from "@/lib/constants";
 
 const initial: LogState = {};
+
+/** Fire a crafted, shining medal toast for each newly earned tier. */
+function celebrate(earned: EarnedMedal[] | undefined) {
+  if (!earned?.length) return;
+  for (const m of earned) {
+    toast.custom(
+      () => (
+        <div className="brushed border-ember/50 flex items-center gap-4 rounded-xl border p-4 shadow-2xl">
+          <Medal tier={m.tier} size={56} shine />
+          <div>
+            <p className="text-ember-bright text-xs font-bold tracking-widest uppercase">
+              Medal earned
+            </p>
+            <p className="text-ash-100 font-display text-xl tracking-wide uppercase">
+              {MEDAL_LABELS[m.tier]} · {MUSCLE_GROUP_LABELS[m.group]}
+            </p>
+          </div>
+        </div>
+      ),
+      { duration: 5000 },
+    );
+  }
+}
 
 export function SetLogger({
   date,
@@ -46,6 +71,7 @@ function AddSetForm({ date, exercises }: { date: string; exercises: ComboExercis
       formRef.current?.reset();
       setExerciseId("");
       toast.success("Set logged.");
+      celebrate(state.earned);
     }
   }, [state]);
 
@@ -160,6 +186,7 @@ function SetRow({
     if (state.ok) {
       setEditing(false);
       toast.success("Set updated.");
+      celebrate(state.earned);
     }
   }, [state]);
 

@@ -5,9 +5,10 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { getOrCreateSession, getOwnedSession } from "@/lib/workouts";
+import { recomputeAchievements, type EarnedMedal } from "@/lib/achievements";
 import { isValidDateString } from "@/lib/dates";
 
-export type LogState = { error?: string; ok?: boolean };
+export type LogState = { error?: string; ok?: boolean; earned?: EarnedMedal[] };
 
 const setSchema = z.object({
   exerciseId: z.string().min(1, "Pick an exercise."),
@@ -65,8 +66,9 @@ export async function createSetAction(_prev: LogState, formData: FormData): Prom
   });
   if (error) return { error: error.message };
 
+  const earned = await recomputeAchievements(user.id);
   revalidateLog();
-  return { ok: true };
+  return { ok: true, earned };
 }
 
 export async function updateSetAction(_prev: LogState, formData: FormData): Promise<LogState> {
@@ -101,8 +103,9 @@ export async function updateSetAction(_prev: LogState, formData: FormData): Prom
     .eq("id", setId);
   if (error) return { error: error.message };
 
+  const earned = await recomputeAchievements(user.id);
   revalidateLog();
-  return { ok: true };
+  return { ok: true, earned };
 }
 
 export async function deleteSetAction(formData: FormData): Promise<void> {
