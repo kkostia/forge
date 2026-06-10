@@ -185,3 +185,96 @@
 .animate-shine {
   animation: shine-sweep 2.6s ease-in-out infinite;
 }
+
+/* ============================================================
+   Exercise guide — animated movement demonstrations
+   ============================================================ */
+
+@keyframes guide-press {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+@keyframes guide-squat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(18px);
+  }
+}
+@keyframes guide-hinge {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(52deg);
+  }
+}
+@keyframes guide-pull {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(18px);
+  }
+}
+@keyframes guide-curl {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-118deg);
+  }
+}
+@keyframes guide-hold {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+.guide-anim-press {
+  animation: guide-press 2.4s ease-in-out infinite;
+}
+.guide-anim-squat {
+  animation: guide-squat 2.4s ease-in-out infinite;
+}
+.guide-anim-hinge {
+  animation: guide-hinge 2.8s ease-in-out infinite;
+  transform-box: view-box;
+  transform-origin: 60px 66px;
+}
+.guide-anim-pull {
+  animation: guide-pull 2.2s ease-in-out infinite;
+}
+.guide-anim-curl {
+  animation: guide-curl 2.2s ease-in-out infinite;
+  transform-box: view-box;
+  transform-origin: 78px 60px;
+}
+.guide-anim-hold {
+  animation: guide-hold 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-anim-press,
+  .guide-anim-squat,
+  .guide-anim-hinge,
+  .guide-anim-pull,
+  .guide-anim-curl,
+  .guide-anim-hold {
+    animation: none;
+  }
+}

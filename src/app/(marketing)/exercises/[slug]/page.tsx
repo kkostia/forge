@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { Medal } from "@/components/medal";
 import { ExerciseCard } from "@/components/exercises/exercise-card";
-import { ExerciseGlyph } from "@/components/exercises/exercise-glyph";
+import { ExerciseGuide, MOTION_LABEL, motionFor } from "@/components/exercises/exercise-guide";
 import { DIFFICULTY_LABELS, EARNABLE_TIERS, MUSCLE_GROUP_LABELS } from "@/lib/constants";
 import { getExerciseBySlug, getExercises, getRelatedExercises } from "@/lib/exercises";
 
@@ -116,12 +116,17 @@ export default async function ExerciseDetailPage({
 
         {/* Side column */}
         <aside className="space-y-6 lg:col-span-5">
-          <div className="brushed border-edge flex h-56 items-center justify-center rounded-xl border">
-            <ExerciseGlyph
-              slug={exercise.slug}
-              muscleGroup={exercise.muscle_group}
-              className="text-forge-500 h-32 w-32"
-            />
+          <div className="brushed border-edge overflow-hidden rounded-xl border">
+            <div className="bg-forge-900/60 forge-glow flex h-56 items-center justify-center">
+              <ExerciseGuide
+                slug={exercise.slug}
+                muscleGroup={exercise.muscle_group}
+                className="h-44 w-44"
+              />
+            </div>
+            <p className="border-edge text-ash-400 border-t px-4 py-3 text-center text-sm">
+              {MOTION_LABEL[motionFor(exercise.slug, exercise.muscle_group)]}
+            </p>
           </div>
 
           {hasThresholds && (
